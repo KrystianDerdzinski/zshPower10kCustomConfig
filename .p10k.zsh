@@ -106,6 +106,7 @@
     time                    # current time
     # =========================[ Line #2 ]=========================
     newline                 # \n
+    my_spotifyplayed        # spotify 
     # ip                    # ip address and bandwidth usage for a specified network interface
     # public_ip             # public IP address
     # proxy                 # system-wide http/https/ftp proxy
@@ -1595,6 +1596,12 @@
       dockerversion="$(grep 'image: repo' $docker_compose_path | sed 's/image: repo.best.net.pl:8083\/ec2\/databases\///g' | sed -e 's/^[ \t]*//' )"
       p10k segment -f '#0db7ed' -i '' -t "${dockerversion}"
     fi
+  }
+
+  function prompt_my_spotifyplayed() {
+    artist="$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/artist/{getline; getline; print}' | sed 's/string//' | sed 's/"//g' | sed -e 's/^[ \t]*//' )"
+    title="$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/title/{getline; print}' | sed 's/string//' | sed 's/variant//' | sed 's/"//g' | sed -e 's/^[ \t]*//' )"
+    p10k segment -i '' -f '#1DB954' -t "${artist} - ${title}"
   }
 
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job

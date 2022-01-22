@@ -1599,9 +1599,11 @@
   }
 
   function prompt_my_spotifyplayed() {
-    artist="$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/artist/{getline; getline; print}' | sed 's/string//' | sed 's/"//g' | sed -e 's/^[ \t]*//' )"
-    title="$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/title/{getline; print}' | sed 's/string//' | sed 's/variant//' | sed 's/"//g' | sed -e 's/^[ \t]*//' )"
-    p10k segment -i '' -f '#1DB954' -t "${artist} - ${title}"
+    if test "$(pidof spotify | wc -l)" = 1; then
+      artist="$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/artist/{getline; getline; print}' | sed 's/string//' | sed 's/"//g' | sed -e 's/^[ \t]*//' )"
+      title="$(dbus-send --print-reply --session --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:'org.mpris.MediaPlayer2.Player' string:'Metadata' | awk '/title/{getline; print}' | sed 's/string//' | sed 's/variant//' | sed 's/"//g' | sed -e 's/^[ \t]*//' )"
+      p10k segment -i '' -f '#1DB954' -t "${artist} - ${title}"
+    fi
   }
 
   # User-defined prompt segments may optionally provide an instant_prompt_* function. Its job
